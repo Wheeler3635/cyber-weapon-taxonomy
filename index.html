@@ -1,0 +1,663 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>The HTML5 Herald</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="SitePoint">
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+
+    
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: sans-serif;
+            background-color: #000000;
+            color: #EEE;
+        }
+
+        a {color: #EEE;}
+
+        main {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background-color: #262524;
+            border-radius: 1rem;
+        }
+
+        .intro {
+            margin-bottom: 2rem;
+        }
+
+        .intro h1 {
+            margin-top: 0;
+        }
+
+
+        .controls {
+            display: grid;
+            grid-template-columns: max-content max-content 1fr;
+            align-items: center;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .controls label {
+            font-size: 1.2rem;
+            margin: .5rem 0;
+        }
+
+        .controls select {
+            font-size: 1.2rem;
+            margin: .5rem 0 .5rem 1rem;
+            padding: .25rem .5rem;
+            border-radius: .5rem;
+            background-color: #302e2d;
+            color: #EEE;
+        }
+
+        .filter-description {
+            grid-column: 1 / span 3;
+        }
+        .filter-description.active {
+            margin: .5rem 0;
+            padding: 1rem;
+            border: 1px solid #262524;
+            border-radius: .5rem;
+            background-color: #302e2d;
+        }
+        .filter-description h4 {
+            margin: 0;
+        }
+        .filter-description p {
+            margin: 1rem 0 0 0;
+        }
+
+        .filter-description li span {
+            font-weight: bold;
+        }
+
+
+
+        .grid {
+            margin-bottom: 2rem;
+        }
+        
+        
+        /* ---- button-group ---- */
+        
+        .button-group {
+            margin-bottom: 20px;
+        }
+        
+        .button-group:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        .button-group .button {
+            float: left;
+            border-radius: 0;
+            margin-left: 0;
+            margin-right: 1px;
+        }
+        
+        .button-group .button:first-child { border-radius: 0.5em 0 0 0.5em; }
+        .button-group .button:last-child { border-radius: 0 0.5em 0.5em 0; }
+        
+        /* ---- isotope ---- */
+        
+        .grid {
+            border: 1px solid #333;
+            background-color: #302e2d;
+            border-radius: .75rem;
+            /* padding: 1rem; */
+        }
+        
+        /* clear fix */
+        .grid:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+        
+        /* ---- .element-item ---- */
+        
+        .element-item {
+            position: relative;
+            float: left;
+            width: calc(50% - .5rem);
+            height: 60px;
+            margin: .25rem;
+            padding: .5rem;
+            background-color: #888;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: .5rem;
+            transition: background 0.5s, color 0.5s;
+        }
+        .element-item.expanded,
+        .element-item:hover {
+            color: #333;
+            background-color: #CCC;
+        }
+
+        .element-item:nth-last-of-type(8n) { border: 2px solid wheat;}
+        .element-item:nth-last-of-type(8n + 1) { border: 2px solid royalblue; }
+        .element-item:nth-last-of-type(8n + 2) { border: 2px solid greenyellow; }
+        .element-item:nth-last-of-type(8n + 3) { border: 2px solid skyblue; }
+        .element-item:nth-last-of-type(8n + 4) { border: 2px solid tomato; }
+        .element-item:nth-last-of-type(8n + 5) { border: 2px solid ivory; }
+        .element-item:nth-last-of-type(8n + 6) { border: 2px solid sandybrown; }
+        .element-item:nth-last-of-type(8n + 7) { border: 2px solid beige; }
+        
+        .element-item > * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .element-item .name {
+            text-transform: none;
+            letter-spacing: 0;
+            /* font-size: 12px; */
+            font-weight: normal;
+        }
+
+        .explanation {
+            padding: 0 1rem;
+        }
+        .explanation > h4 {
+            margin: 0;
+            margin-bottom: .75rem;
+        }
+        .explanation .details {
+            /* display: grid; */
+        }
+        .explanation .details > p {
+            display: block;
+            margin: 0;
+            margin-bottom: .25rem;
+        }
+        .explanation .details > p > span {
+            font-weight: bold;
+        }
+
+        @media screen and (min-width: 560px) {
+            .element-item {
+                width: calc(33% - .5rem);
+            }
+
+        }
+
+        @media screen and (min-width: 800px) {
+            .element-item {
+                width: calc(25% - .5rem);
+            }
+
+        }
+
+        @media screen and (min-width: 1000px) {
+            .element-item {
+                width: calc(20% - .5rem);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <section class="intro">
+            <h1>A Filterable Taxonomy of Cyber Weaponry</h1>
+        
+            <p>Welcome to my project! The motivation behind this creation is to easily examine and view a wide variety of cyber weapons in a single resource. This Taxonomy has been created as part of my Ethical Hacking Honours Project.</p>
+        
+            <p>Please feel free to experiment with the Taxonomy and click on a weapon to be taken to some relavent articles to find out more!</p>
+        </section>
+
+        <form class="controls">
+            <label>Weapon Type</label>
+            <select class="" data-filter-group="type"></select>
+            <article class="filter-description" data-definition-area="type"></article>
+            
+            <label>Developer</label>
+            <select class="" data-filter-group="country"></select>
+            <article class="filter-description" data-definition-area="country"></article>
+        </form>
+
+        <section class="grid">
+            <div id="grid"></div>
+        </section>
+
+        <section id="explanation">
+        </section>
+    </main>
+
+
+
+    <script >
+        // external js: isotope.pkgd.js
+
+        const $Grid = $('#grid');
+        const DATA = {
+            "00001": {
+                name: "BlackEnergy",
+                filterables: {
+                    type: ["Malware", "Botnet", "DDoS"],
+                    country: ["Russia"],
+                },
+                discoveryDate: "BE1 - 2007, BE2 - 2010, BE3 - 2014",
+                developer: "Sandworm (Russia)",
+                description: [
+                    "BlackEnergy has been released in several different configurations, labeled 1 to 3. ",
+                    "BE1 can be used to conduct several different types of attacks including bot generated denial of service. However, it’s primary function was to use server-side scripts to enable the attacker access to command and control assets.",
+                    "BE2 served a similar purpose but added several capabilities to its arsenal. The inclusion of a “dropper” and sophisticated encryption enabled the malware to hide much more easily. It has the ability to execute local files as well as download and execute remote files.",
+                    "BE3 first emerged in 2014 but reached a level of infamy when its involvement in the 2015 Ukrainian Power Grid Attack was revealed. This variant of BlackEnergy was simpler and but still had all the functionality of the previous versions.",
+                    "Once dissected, the malwate was attributed to the APT Group known as Sandworm. This group is a Russain affiliated group who are speculated to be either a state department or state sponsored. This opinion is further justified by the operations going on in Ukraine at the time of BE3’s deployment against their critical infrastructure.",
+                ]
+            },
+            "00002": {
+                name: "Duqu",
+                filterables: {
+                    type: ["Malware", "Worm"],
+                    country: ["Israel"],
+                },
+                discoveryDate: "1st September 2011",
+                developer: "Unit 8200 (Israel)",
+                description: [
+                    "Duqu is suspected to be a relative of the Stuxnet weapon as it has many similar hallmarks. It is not just a single type of attack, but more a collection of malware that seeks to exploit Microsoft Office packages such as Word using Zero-day exploits. ",
+                    "It is said that the Duqu collection is identical to Stuxnet in nature but with “an entirely different purpose”. It is suspected that the authors of Stuxnet are the same as Duqu or at least Duqu’s authors had access to the source code for Stuxnet. The primary purpose for Duqu is to collect data in preparation for future attacks.",
+                    "A second version was discovered in 2015 dubbed Duqu 2.0. It was discovered in a chain of hotels in Austria and Switzerland where negotiations were taking place with Iran regarding Nuclear deals.",
+                ]
+            },
+            "00003": {
+                name: "GhostNet/Gh0st RAT",
+                filterables: {
+                    type: ["Malware", "Trojan"],
+                    country: ["China"],
+                },
+                discoveryDate: "March 2009",
+                developer: "C. Rufus Security Team (China)",
+                description: [
+                    "GhostNet is a mass deployment of covert reconnaissance malware used to monitor and track different targets. Once discovered the infiltration was discovered in 103 countries with targets focusing around embassies, foriegn ministries and government offices. Particular emphasis was placed on Indian diplomatic centres as far away as the United States and the Dalai Lama’s exile centres in India, the UK and US.",
+                    "It is reported that the structure of this surveillance operation was all located in China. This attack had two parts, first a machine would be infected with GhostNet, then it would let a trojan known as Gh0st RAT onto the system. This Remote Administration Tool (RAT) would allow the attacker to gain complete real-time control of a system. This would mean that conference or meeting room cameras, microphones and other electronic devices could be controlled and monitored.",
+                ]
+            },
+            "00004": {
+                name: "Great Cannon",
+                filterables: {
+                    type: ["DDoS", "Man-In-The-Middle"],
+                    country: ["China"],
+                },
+                discoveryDate: "March 2015",
+                developer: "Unknown Government APT (China)",
+                description: [
+                    "The idea behind Great Cannon is to deliver high powered denial of service attacks by injecting code using a man-in-the-middle technique. This code will flood targeted websites and crash them. However, Great Cannon had many other capabilities and it is known to have the capacity to spread malware, monitor traffic and attack systems in a manner similar to high advanced Quantum Insert method developed by the NSA.",
+                    "Great Cannon has been deployed multiple times including against some large tech giants such as GitHub. This was primarily due to the site hosting censorship evasion tools. Furthermore, the Mingjing News agency was attacked with this weapon for speaking out against the Chinese Government.",
+                    "In the case of GitHub it is noted that it caused some serious political consequences as the United States Department of State viewed the attack as “an attack on US infrastructure”.",
+                ]
+            },
+            "00005": {
+                name: "Operation Aurora",
+                filterables: {
+                    type: ["Malware", "Backdoor"],
+                    country: ["China"],
+                },
+                discoveryDate: "June to December 2009 (Disclosed January 2010)",
+                developer: "Elderwood Group, Beijing Group, APT17 (China)",
+                description: [
+                    "During the second half of 2009 Operation Aurora was conducted by the Elderwood Group supposedly on the behalf of the Chinese Government. There was a widespread cyber attack chain across multiple companies. Those who claim to have been targeted or affected include Google, Adobe, Akamai, Juniper, Rackspace, Yahoo, Morgan Stanley and Northrop Grumman.",
+                    "The primary target among these victim companies appears to be Google. In the blog post released disclosing the attack, Google stated that some of it’s intellectual property had been stolen and there was a focus on accessing the personal information and GMail accounts of chinese citizens. The result of this attack was that Google closed it’s chinese offices and left the country, discontinuing their services. ",
+                    "The attacks utalisied a Zero-Day vulnerability contained within internet explorer and after the google attack, it is suspected many other systems were breached. This includes the Defence and Aerospace company Northrop Grumman.",
+                ]
+            },
+            "00006": {
+                name: "Operation Socialist",
+                filterables: {
+                    type: ["Malware", "Man-In-The-Middle", "Quantum Insert"],
+                    country: ["United Kingdom"],
+                },
+                discoveryDate: "2010 to 2013 (Disclosed in 2013)",
+                developer: "GCHQ (United Kingdom)",
+                description: [
+                    "OP Socialist is the code name given by GCHQ to the quantum insert attack mounted against the Belgian Telecommunications company Belgacom. The goal of the operation was to use a highly advanced technique developed by the NSA called Quantum Insert. This was embedded in faked LinkedIn accounts that were trying to engage with Belgacom Engineers.",
+                    "The objective of the attack was to plant telecoms monitoring tools within Belgium's Telecommunications network in order to perform surveillance on mobile phone traffic including calls and text messages. It is known that the operation was a success and monitoring took place for several years.",
+                    "It is a highly controversial topic in the Western World as the details on the operation were revealed in leaked documents by Edward Snowden. Furthermore, it is the first recorded example of an EU member state (at the time of the attacks) attacking another. It is likely that the purpose of this attack on such a closely allied nation was for the intelligence rich environment in Brussels. This where the EU headquarters is and also has a large UN and NATO presence.",
+                ]
+            },
+            "00007": {
+                name: "Ouroboros/Turla/Snake",
+                filterables: {
+                    type: ["Malware", "Virus", "Backdoor", "Trojan"],
+                    country: ["Russia"],
+                },
+                discoveryDate: "2008",
+                developer: "Turla (Russia)",
+                description: [
+                    "Not much is known by security researchers about this weapon as it is still an active and growing threat. It is suspected to be produced by a Russian Government Agency known as Turla for the purposes of espionage. Most targets of this weapon either come from the Middle East or are based in Europe.",
+                    "The attack is propagated through spear phishing campaigns exploiting several CVEs in Adobe products such as PDF files and Flash. These methods are mainly used to attack and monitor government or military targets but have been found in educational circles as well as research or pharmaceutical companies. ",
+                ]
+            },
+            "00008": {
+                name: "Petya/NotPetya",
+                filterables: {
+                    type: ["Malware", "Cryptographic", "Virus", "Trojan"],
+                    country: ["Russia"],
+                },
+                discoveryDate: "March 2016",
+                developer: "Sandworm (Russia)",
+                description: [
+                    "Petya first appeared in March 2016 when it was starting to be spread through malicious email attachments. The virus exploited the master boot record to encrypt a user's hard drive and in return demand BitCoin for it’s release. What is interesting to note is that the first variants of the malware were produced by an individual who was supposedly arrested and fined by Ukrainian Authorities.",
+                    "However, in June 2017 a new variant of the malware was discovered. This new variant identified by Kaspersky Labs was dubbed NotPetya. It was primarily aimed at the Ukrainian state utilizing the EternalBlue exploit developed by the NSA years before. ",
+                    "The attack became global after first emerging in Ukraine. It successfully attacked the National Bank of Ukraine as well as the Power Grid, Bus Stations and Airports. The highest proportion of infections is 80% in Ukraine with Germany in second place at 9%. The world was heavily affected by the attack though super corporations such as Maersk were brought to their knees by the attack. It is suspected to be politically motivated and relevant to the conflict in Ukraine as it was deployed the day before the Ukrainian Constitution Day.",
+                ]
+            },
+            "00009": {
+                name: "Red October",
+                filterables: {
+                    type: ["Malware", "Backdoor"],
+                    country: ["Unknown"],
+                },
+                discoveryDate: "October 2012",
+                developer: "Unknown",
+                description: [
+                    "The Red October attacks were discovered and named by Kaspersky Labs in October 2012, however it has been reported that that malware had been operating for upto 5 years before this date.",
+                    "The package exploited several vulnerabilities in Microsoft Applications including Word and Excel. The primary target of the weapon is diplomatic secrets contained within the networks of governmental and research organisations primarily in Russia and former USSR countries. ",
+                    "After it’s discovery many hosting companies whose infrastructure was unknowingly supporting the architecture for the attack shut down their domains and services. Furthermore, the mysterious attackers closed all the connections on their end and disappeared. Due to the nature of this withdrawal and the target nations it is a possibility that this attack originated somewhere from one of Russia’s historical adversaries in the West, but not confirmed.",
+                ]
+            },
+            "00010": {
+                name: "Shamoon",
+                filterables: {
+                    type: ["Malware", "Virus", "Logic Bomb"],
+                    country: ["Iran"],
+                },
+                discoveryDate: "August 2012",
+                developer: "Cutting Sword of Justice (Iran)",
+                description: [
+                    "Shamoon was deployed in a diplomatic cyber warfare operation against several oil and gas companies including Saudi Aramco and Qatari RasGas. The weapon worked by accessing the master boot record and overwriting it making the machine totally unusable. It would then report back the addresses of all the infected machines back.",
+                    "In total Saudi Aramco had 30,000 infected terminals and recovery was particularly slow. This was due to the strategic timing of the attack. Just after Ramadan when the vast majority of workers would be absent on their religious holiday. ",
+                    "A paste of highly politically motivated propaganda was uploaded just before the attack accusing Al-Saud regime as tyrannical and oppressive just hours before the attack. Then an unnamed Saudi IT employee opened an email attachment allowing the attackers access to the whole network. Another point of note is that two weeks after the attack a statement was released saying the work and operation had returned to normal. This however was a lie, as leaked photos show miles of fuel trucks queuing to refill as the fueling system were still inoperable.",
+                ]
+            },
+            "00011": {
+                name: "Stuxnet",
+                filterables: {
+                    type: ["Malware", "Worm"],
+                    country: ["United States"],
+                },
+                discoveryDate: "June 2010",
+                developer: "Equation Group (United States)",
+                description: [
+                    "Stuxnet is arguably the most infamous and well known deployments of any cyber attack or cyber weapon ever. This is for several reasons, firstly it is the first ever example of a cyber weapon or computer related attack causing physical damage. Secondly it is also the first example of one nation state openly deploying such a weapon against another for political reasons.",
+                    "Many weapons have been developed since the time of stuxnet and many have mimicked it’s methodology. It has become a popular reference material for anything cyber weapon related.",
+                    "The attack was performed against the Iranian Nuclear Facility at Natanz. The concept was to seize control of the SCADA system and alter the function of the Nuclear Enrichment Centrifuges. Subtly the pieces of equipment began to vibrate and rattle themselves into a damaged state before anything was noticed. This caused irreparable damage to the program and had to be scrapped. It is likely that the attack was performed in cooperation with Israel’s Unit 8200 as the country as an elevated concern for Iran and its nuclear capabilities.",
+                ]
+            },
+            "00012": {
+                name: "TV5Monde Attack",
+                filterables: {
+                    type: ["Malware"],
+                    country: ["Russia"],
+                },
+                discoveryDate: "April 2015",
+                developer: "Fancy Bear/APT28 (Russia)",
+                description: [
+                    "TV5Monde is a French speaking broadcasting network shown around the world. However, in April of 2015 for several hours an attack took place on their network allowing footage to be displayed and their channel hijacked.",
+                    "The network ended up broadcasting propaganda produced by the so-called Islamic State for over three hours. In addition to this the social media accounts of the TV network were all taken over by a hacking group calling themselves the CyberCaliphate. These links to ISIS were considered to be a follow up to the terror attacks in Paris earlier that year and in response to increased French participation in operations in Iraq and Syria.",
+                    "Once research was conducted into the attack however, it was revealed under an investigation that the CyberCaliphate was not actually responsible. A group known as Fancy Bear or APT28 with links to the Russian government were the real perpetrators. It was also widely understood that the attacks on the TV5Monde network were a trial run for the malware that was going to be deployed later in the year against the Ukrainian Power Grid.",
+                ]
+            },
+            "00013": {
+                name: "Titan Rain",
+                filterables: {
+                    type: ["Malware", "Virus", "Botnet"],
+                    country: ["China"],
+                },
+                discoveryDate: "2003",
+                developer: "Unit 61398 (China)",
+                description: [
+                    "Titan Rain is a lengthy campaign of cyber attacks over the period of three years from 2003-2006. The attacks target the United States defence and Aerospace sector with the aim of obtaining state secrets or technology. Target organisations include Lockheed Martin, Sandia National Laboratories, redstone Arsenal and NASA.",
+                    "The unit is also blamed for performing cyber attacks on the United Kingdom’s Houses of Commons. However after accusations from the UK and US the Chinese government has denied all responsibility for the attacks.",
+                    "The attacks caused quite a significant political backlash from Russian, the UK and America as the chinese were deploying military units to perform mass organised hacking and cyber warfare. Alan Paller from the SANS Institute is quoted saying that the individuals were acting with immense discipline and no other organisation could perform so well apart from the military.",
+                ]
+            },
+            "00014": {
+                name: "Vulcan Bot",
+                filterables: {
+                    type: ["Malware", "Botnet", "Trojan", "Backdoor", "DDoS"],
+                    country: ["Vietnam"],
+                },
+                discoveryDate: "Late 2009",
+                developer: "Vietnamese Government",
+                description: [
+                    "Not much is known about Vulcan Bot. It was discovered spreading in 2009 with approximately 15,000 machines infected. It primarily target the Vietnamese Professionals Society website by creating a backdoor.",
+                    "This had the primary aim of being able to DDoS bloggers on the site who were critical of the Government's bauxite mining operations. As the vietnamese Government was also looking to suppress any and all criticism throughout 2010, it is believed that the Government developed and spread this botnet under politically motivated circumstances.",
+                    "This is one of the few examples where a nation state has deployed a weapon that has been exposed on its own people. It is similar in function to the Chinese Operation Aurora that was being performed at the same time to monitor its citizens but was discovered to be totally unrelated.",
+                ]
+            },
+            "00015": {
+                name: "WannaCry",
+                filterables: {
+                    type: ["Malware", "Cryptographic", "Worm"],
+                    country: ["North Korea"],
+                },
+                discoveryDate: "May 2017",
+                developer: "Lazarus Group (North Korea)",
+                description: [
+                    "The WannaCry Ransomware was a global attack based on aging systems. The mass attack was spread across 150 different countries and over 200,000 different computers.",
+                    "The attacks exploited an aging vulnerability in SMB known as EternalBlue and proved to many businesses that they had not updated their infrastructure. In the United Kingdom it was of particular worry as many unupdated systems within the NHS putting many peoples lives at risk.",
+                    "The four most affected countries in the attacks however were Russia, Ukraine, India and Taiwan. The United States and United Kingdom firmly accused and proved that the attack came from North Korea in December 2017.",
+                ]
+            }
+        }
+
+        const DEFINITIONS = {
+            "Backdoor": "<p>This type of attack is performed from an external perspective. It makes use of unsecured weaknesses in websites or servers such as out of date plugins or intentionally placed shortcuts by developers. This allows an attacker to enter undetected or “through the back door” as often perimeter defences such as firewalls will not be monitoring these things as they believe they are safe.</p>",
+            "Botnet": "<p>A Botnet attack is when a machine or device is hijacked and added to a collection of other hijacked devices to form a giant hivemind. This collective botnet is used to perform mundane tasks en-masse such as spam emails, increasing web traffic for financial gain or most commonly Distributed Denial of Service attacks.</p>",
+            "Cryptographic": "<p>This form of attack is usually associated with “Ransomware” due to it’s way of working. The malware will gain access to the machine and begin to encrypt all of the data on the hard drive with often a demand for payment displayed on the screen. This demand is usually requested for in crypto currency such as BitCoin for the attack to then release the machine and decrypt the files.</p>",
+            "DDoS": "<p>Distributed Denial of Service attacks are common due to their ease to perform by someone who has no experience of skill in cyber crime. However, this is not to say that DDoS attacks cannot be complex. The premise of this type of attack is to overwhelm a service such as a website or server and any application attached to that will be shut down by a huge quantity of traffic, therefore, rendering the infrastructure useless until the attack ceases.</p>",
+            "Logic Bomb": "<p>A Logic Bomb is a way of delivering payload to the target. Different types of malware use this method to execute their malicious code when a certain condition is met such as a certain date or time. This is used so that the worm or virus can spread through a network and embed itself on as many targets as possible before the execution time. Once that condition is met, all infected machines will execute the malicious code simultaneously.</p>",
+            "Malware": "<p>Almost all types of attack are malware. It can be divided into several different sub categories based on its function, operation method and purpose. Malware is simply any type of malicious code or application or program that is executed on a target system.</p>",
+            "Man-In-The-Middle": "<p>A MITM attack is usually used for snooping or reconnaissance purposes. The idea is that the infected machine will intercept any communications on the network, be able to adjust or read that data, then forward it on to its intended destination. Many advanced techniques can be combined with this to make it appear that the intercepted message was not tampered with at all or reading encrypted information that the attacker would not normally be able to see.</p>",
+            "Quantum Insert": "<p>This method of attack is a highly advanced development of the MITM attack created by the NSA and GCHQ. It exploits the target users web surfing habits and attempts to trick them. How this is done is by inserting a fake web server with seemingly legitimate appearance in the way of their web traffic. Then, with secretly hidden code snippets being sent to and from the target the attacker can gain control or perform other attacks.</p>",
+            "Trojan": "<p>A trojan gets its name from the age old tale of the greeks and the trojan horse. This is due to the way this type of attack works, in an almost identical fashion. A trojan will be usually downloaded from the internet or through a phishing email. The key however, is that the application looks totally legitimate and is usually something that is legitimate but has been tampered with. This method avoids firewalls as the malware is something that defences expect to be downloaded anyway. </p>",
+            "Virus": "<p>A virus is often an overused title for different types of attacks. However, a virus is a single specific type that exploits a single program or application. For example a virus may attack through a certain macro present within a microsoft word document and is then moved from machine to machine as that file is transferred or whoever opens the file on their machine.</p>",
+            "Worm": "<p>Worms are a type of malware that act in a similar manner to a virus. However their key advantage is that they are self propagating with no input required from the attacker. Once it has been downloaded onto the target system it will move and replicate itself across the whole network. When combined with something like a Logic Bomb this can prove devastating and grow out of control easily causing collateral damage.</p>",
+            "China": "<ul><li><span>admin@338</span></li><li><span>APT12</span> - DynCalc, Numbered Panda, DNSCALC, IXESHE</li><li><span>APT16</span></li><li><span>APT17</span> - Deputy Dog</li><li><span>APT3</span> - Gothic Panda, Pirpi, UPS Team, Buckeye</li><li><span>Chimera</span></li><li><span>HAFNIUM</span></li><li><span>APT15</span> - Ke3chang, Mirage, Vixen Panda, GREF, Playful Dragon</li><li><span>Moafee</span></li><li><span>Mofang</span></li><li><span>Mustang Panda</span> - TA416, RedDelta, BRONZE PRESIDENT</li><li><span>Night Dragon</span></li><li><span>Operation Wocao</span></li><li><span>PittyTiger</span></li><li><span>Suckfly</span></li><li><span>TA459</span></li><li><span>APT31</span> - ZIRCONIUM</li><li><span>APT1</span> - Comment Crew, Comment Panda</li><li><span>APT19</span> - Codoso, C0d0so0, Sunshop Group</li><li><span>APT30</span></li><li><span>APT41</span> - WICKED PANDA</li><li><span>Axiom</span></li><li><span>BRONZE BUTLER</span> - REDBALDKNIGHT, Tick</li><li><span>Deep Panda</span> - Shell Crew, WebMasters, KungFu Kittens, PinkPanther, Black Vine</li><li><span>Elderwood</span> - Beijing Group, Sneaky Panda</li><li><span>GALLIUM</span></li><li><span>APT10</span> - menuPass, Cicada, POTASSIUM, Stone Panda, Red Apollo, HOGFISH</li><li><span>Naikon</span></li><li><span>APT2</span> - PutterPanda</li><li><span>Rocke</span></li><li><span>Scarlet Mimic</span></li><li><span>APT27</span> - Emissary Panda, BRONE UNION, Iron Tiger, LuckyMouse</li><li><span>Winnti Group</span> - Blackfly</li></ul>",
+            "Russia": "<ul><li><span>APT28</span> - SNAKEMACKEREL, Swallowtail, Group 74, Sednit, Sofacy, Pawn Storm, Fancy Bear, STRONTIUM, Tsar Team</li><li><span>APT 29</span> - Dark Halo, StellarParticle, NOBELIUM, YTTRIUM, The Dukes, Cozy Bear, CozyDuke</li><li><span>Dragonfly 2.0</span> - IRON LIBERTY, DYMALLOY, Berzerk Bear</li><li><span>Sandworm</span> - ELECTRUM, Telebots, IRON VIKING, BlackEnergy Group, Quedagh, VOODOO BEAR</li><li><span>TEMP.Veles</span> - XENOTIME</li><li><span>Turla</span> - Group 88, Belugasturgeon, Waterbug, Whitebear, VENOMOUS BEAR, Snake, Krypton</li></ul>",
+            "United States": "<ul><li><span>Equation Group</span></li><li><span>NSA, CIA and other government agencies</span></li><li><span>Military Dedicated Units</span> (Paper Appendix A)</li></ul>",
+            "United Kingdom": "<ul><li><span>Military Dedicated Units</span> (Paper Appendix A)</li><li><span>GCHQ</span></li><li><span>MI5, MI6 & SIS</span></li></ul>",
+            "Iran": "<ul><li><span>Ajax Security Team</span> - AjaxTM, Rocket Kitten, Flying Kitten</li><li><span>APT33</span> - HOLMIUM, Elfin</li><li><span>APT39</span> - REMIX KITTEN, Chafer</li><li><span>Cleaver</span> - TG2889</li><li><span>CopyKittens</span></li><li><span>Fox Kitten</span> - PIONEER KITTEN, Parisite</li><li><span>Group5</span></li><li><span>Leafminer</span> - Raspite</li><li><span>APT35</span> - Magic Hound, Charming Kitten, COBALT ILLUSION, Phosphorus, Newscaster</li><li><span>MuddyWater</span> - MERCURY, Earth Vetala, Static Kitten, Seedworm, TEMP.Zagros</li><li><span>APT34</span> - OilRig, COBALT GYPSY, HELIX KITTEN</li><li><span>Silent Librarian</span> - COBALT DICKENS</li></ul>",
+            "Israel": "<ul><li><span>Unit 8200</span></li></ul>",
+            "Vietnam": "<ul><li><span>APT32</span> - SeaLotus, OceanLotus</li></ul>",
+            "North Korea": "<ul><li><span>APT37</span> - ScarCruft, Reaper, Group123, TEMP.Reaper</li><li><span>APT38</span></li><li><span>Kimsuky</span> - Thallium, Black Banshee, Velvet Chollima</li><li><span>Lazarus Group</span> - HIDDEN COBRA, Guardians of Peace, ZINC, NICKEL ACADEMY</li></ul>",
+        }
+        const filters = {}
+
+        Object.keys(DATA).forEach(cardId => {
+            const cardData = DATA[cardId]
+            // Create the element for the card
+                const $card = $(`
+                <div class="element-item" id="${cardId}" >
+                    <h3 class="name">${cardData.name}</h3>
+                </div>
+                `);
+            
+            // Grab any unique info from the card for filtering
+            Object.keys(cardData.filterables).forEach(filter => {
+                const filterData = cardData.filterables[filter];
+                // Add text to the card and attr to the card
+                $card
+                // .append(`<p class="${filter}">${filter}: ${filterData.join()}</p>`)
+                    .attr(`data-filter-${filter}`, filterData.join())
+                
+                // 
+                if(!(filter in filters))
+                filters[filter] = []
+                
+                // Add to the filters if necessary
+                filterData.forEach(filterName => {
+                if(filters[filter].indexOf(filterName) < 0)
+                    filters[filter].push(filterName)
+                })
+            })
+            
+            // And append it
+            $Grid.append($card);
+        })
+
+        $selectOption = $(`<option></option>`)
+
+        Object.keys(filters).forEach(filter => {
+            $selectOption.clone().attr('value', '*').append('Show All').appendTo($(`[data-filter-group="${filter}"]`));
+            const values = filters[filter];
+            values.sort((a, b) => {
+                var nameA = a.toUpperCase();
+                var nameB = b.toUpperCase();
+                if (nameA < nameB) {
+                    return -1;
+                }
+                if (nameA > nameB) {
+                    return 1;
+                }
+
+                return 0;
+            }).forEach(value => {
+                $selectOption.clone().attr('value', value).append(value).appendTo($(`[data-filter-group="${filter}"]`));
+            })
+        })
+
+
+
+
+
+        // init Isotope and sort
+        const $iso = $Grid.isotope({
+            itemSelector: '.element-item',
+            layoutMode: 'fitRows',
+            getSortData: {
+                name: '.name',
+            }
+        }).isotope({ sortBy : 'name' });;
+        
+
+        
+        const ACTIVE_FILTERS = {};
+        const applyFilters = () => {
+            const currentFilters = Object.keys(ACTIVE_FILTERS);
+            let newFilterSelector = '';
+            clearExplanation()
+            if(currentFilters.length > 0) {
+                currentFilters.forEach((filter, index) => {
+                    const value = ACTIVE_FILTERS[filter];
+                    if(index === 0)
+                        newFilterSelector = `[data-filter-${filter}*="${value}"]`
+                    else
+                        newFilterSelector = `${newFilterSelector}[data-filter-${filter}*="${value}"]`
+                })
+            } else {
+                newFilterSelector = '*'
+            }
+
+            $iso.isotope({ filter: newFilterSelector });
+        }
+        // bind filter button click
+        $('[data-filter-group]').on( 'change', function() {
+            
+            // $(this).addClass('is-checked').siblings().removeClass('is-checked');
+            const filterCategory = $( this ).attr('data-filter-group');
+            var filterValue = $( this ).val();
+
+
+            if(filterValue in DEFINITIONS)
+                $(`[data-definition-area=${filterCategory}]`)
+                    .addClass('active')
+                    .empty()
+                    .append(`
+                        <h4>${filterValue}</h4>
+                        ${DEFINITIONS[filterValue]}
+                        ${filterCategory === 'country' ? `<p>More detailed information on each of these APT groups and more can be found here at MITRE ATT&CK: <a href="https://attack.mitre.org/groups/" target="_blank">https://attack.mitre.org/groups/</a></p>` : ''}
+                    `);
+            else
+                $(`[data-definition-area=${filterCategory}]`)
+                    .removeClass('active')
+                    .empty()
+
+
+            $iso.isotope('remove', $('.element-expander'));
+            $('.element-item.expanded').removeClass('expanded')
+          
+            if(filterValue === '*')
+                delete ACTIVE_FILTERS[filterCategory]
+            else
+                ACTIVE_FILTERS[filterCategory] = filterValue;
+
+
+            applyFilters()
+        });
+
+        $('.element-item').on('click',  function() {
+            const $this = $(this);
+
+            // If this is laready open then do nothing
+            if($this.hasClass('expanded'))
+                return null
+
+            // Kill any old expanders and reset their card
+            // $iso.isotope('remove', $('.element-expander'));
+            clearExplanation()
+
+            // Activate the card and add the expander
+            $this.addClass('expanded')
+            const cardId = $this.attr('id');
+            const { name, description, filterables, discoveryDate, developer } = DATA[cardId];
+
+            const $explanation = $(`
+                <article class="explanation" data-explanation-for="${cardId}">
+                    <div class="close-explanation"></div>
+                    <h4>${name}</h4>
+                    <div class="details">
+                        <p><span>Type:</span> ${filterables.type.join()}</p>
+                        <p><span>Origin:</span> ${developer}</p>
+                        <p><span>Discovery Date:</span> ${discoveryDate}</p>
+                    </div>
+                    <div class="description"></div>
+                </article>
+            `)
+            description.forEach(desc => {
+                $explanation.find('.description').append(`<p>${desc}</p>`)
+            })
+            // $.each(this.attributes, function() {
+            //     if(this.name.includes('data-filter-'))
+            //         $expander.attr(this.name, this.value)
+            // })
+
+            // $iso.isotope('insert', $expander);
+            $('#explanation').append($explanation)
+        })
+
+        $('#explanation').on('click', '.close-explanation', function() {
+            clearExplanation()
+        })
+
+        function clearExplanation () {
+            $('.element-item').removeClass('expanded')
+            $('#explanation').empty()
+        }
+
+    </script>
+</body>
+</html>
